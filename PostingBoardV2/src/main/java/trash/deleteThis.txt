@@ -1,0 +1,6 @@
+{
+    "username": "owner",
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvd25lciIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE2NjE1MjYzNzIsImV4cCI6MTY5NzUyNjM3Mn0.J3iHJf3fNEhDvmAWBnZPL9Be3ALvSwIA8LOUJxHcAUs"
+}
+{"username":"moderator",
+"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2RlcmF0b3IiLCJyb2xlcyI6WyJST0xFX01PREVSQVRPUiJdLCJpYXQiOjE2NjE1NDAxMDAsImV4cCI6MTY5NzU0MDEwMH0.bi0FXNer4ac1xcCe78mlNPwkyYDRV-dMv2KMR7z5yzA"}
