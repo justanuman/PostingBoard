@@ -37,10 +37,10 @@ public class UserService implements IUserService {
     BCryptPasswordEncoder passwordEncoder;
     IUserRoleDAO userRoleDAO;
 
-//@Autowire кидал мне в лицо npe неизвестно почему так что di не вышло
-    UserDtoAdapter userDtoAdapter = new UserDtoAdapter();
-
-    UserProfileDtoAdapter userProfileDtoAdapter= new UserProfileDtoAdapter();
+    @Autowired
+    UserDtoAdapter userDtoAdapter=new UserDtoAdapter();
+    @Autowired
+    UserProfileDtoAdapter userProfileDtoAdapter=new UserProfileDtoAdapter();
 
 
     @Autowired

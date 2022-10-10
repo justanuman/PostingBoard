@@ -1,6 +1,5 @@
 package com.postingBoard.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.postingBoard.dto.InternalTransactionsDto;
@@ -56,14 +55,12 @@ class TransactionControllerTest {
         user.setId(1);
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("me");
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         when(userService.findByUsername("me")).thenReturn(user);
         when(postService.findByID(1)).thenReturn(post);
         TransactionsDto transactionsDto = new TransactionsDto(1, 1, 1, BigDecimal.TEN, "OPEN", 1);
         when(transactionService.openTransaction(transactionsDto)).thenReturn(transactionsDto);
-        String json = ow.writeValueAsString(transactionsDto);
-        String out = transactionController.openTransaction(1, 1, mockPrincipal);
-        Assertions.assertEquals(out, json);
+        TransactionsDto out = transactionController.openTransaction(1, 1, mockPrincipal);
+        Assertions.assertEquals(out, transactionsDto);
     }
 
     @Test
@@ -76,14 +73,12 @@ class TransactionControllerTest {
         user.setId(1);
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("me");
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         when(userService.findByUsername("me")).thenReturn(user);
         when(postService.findByID(1)).thenReturn(post);
         TransactionsDto transactionsDto = new TransactionsDto(1, 1, 1, BigDecimal.TEN, "OPEN", 1);
         when(transactionService.openTransaction(transactionsDto)).thenReturn(transactionsDto);
-        String json = ow.writeValueAsString(transactionsDto);
-        String out = transactionController.openTransaction(1, 1, mockPrincipal);
-        Assertions.assertEquals(out, json);
+        TransactionsDto out = transactionController.openTransaction(1, 1, mockPrincipal);
+        Assertions.assertEquals(out, transactionsDto);
     }
 
     @Test
@@ -96,37 +91,33 @@ class TransactionControllerTest {
         user.setId(1);
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("me");
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         when(userService.findByUsername("me")).thenReturn(user);
         when(postService.findByID(1)).thenReturn(post);
         TransactionsDto transactionsDto = new TransactionsDto(1, 1, 1, BigDecimal.TEN, "OPEN", 1);
         when(transactionService.openTransaction(transactionsDto)).thenReturn(transactionsDto);
-        String json = ow.writeValueAsString(transactionsDto);
-        String out = transactionController.openTransaction(1, 1, mockPrincipal);
-        Assertions.assertEquals(out, json);
+        TransactionsDto out = transactionController.openTransaction(1, 1, mockPrincipal);
+        Assertions.assertEquals(out, transactionsDto);
     }
 
     @Test
     void transactionCheck() throws Exception {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         when(transactionService.checkIfTransactionIsOpen(1)).thenReturn(Boolean.TRUE);
-        Assertions.assertEquals(transactionController.transactionCheck(1), "true");
+        Assertions.assertEquals(transactionController.transactionCheck(1), Boolean.TRUE);
 
     }
 
     @Test
     void getTransactions() throws Exception {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         List<InternalTransactionsDto> out = new ArrayList<>();
         out.add(new InternalTransactionsDto(1,BigDecimal.TEN,"11"));
         when(transactionService.getAllOpenTransactions()).thenReturn(out);
-        Assertions.assertEquals(transactionController.getTransactions(), ow.writeValueAsString(out));
+        Assertions.assertEquals(transactionController.getTransactions(), out);
 
     }
 
     @Test
     void closeTransaction() {
         when(transactionService.closeTransaction(1)).thenReturn(Boolean.TRUE);
-        Assertions.assertEquals("true",transactionController.closeTransaction(1));
+        Assertions.assertEquals(transactionController.closeTransaction(1),Boolean.TRUE);
     }
 }

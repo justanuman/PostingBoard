@@ -75,9 +75,7 @@ class PostingBoardControllerTest {
         post.setId(1);
         when(postService.findByIDAndAuthor(1, 1)).thenReturn(post);
         when(postService.updatePost(1, postsInputDto)).thenReturn(postsDto);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(postsDto);
-        Assertions.assertEquals(json, postingBoardController.updatePost(1, "title", "category", BigDecimal.TEN, "contents", mockPrincipal));
+        Assertions.assertEquals(postsDto, postingBoardController.updatePost(1, "title", "category", BigDecimal.TEN, "contents", mockPrincipal));
     }
 
     @Test
@@ -111,9 +109,7 @@ class PostingBoardControllerTest {
         PostsDto postsDto = new PostsDto(1, "title", "category", 1, BigDecimal.TEN, "contents", Date.from(Instant.now()));
         out.add(postsDto);
         when(postService.showFeedByCategory("category", 0)).thenReturn(out);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(out);
-        Assertions.assertEquals(json, postingBoardController.postsFeed(1,0,null,"category",null));
+        Assertions.assertEquals(out, postingBoardController.postsFeed(1,0,null,"category",null));
 
     }
 
@@ -123,10 +119,7 @@ class PostingBoardControllerTest {
         PostsDto postsDto = new PostsDto(1, "title", "category", 1, BigDecimal.TEN, "contents", Date.from(Instant.now()));
         out.add(postsDto);
         when(postService.showAuthorHistory(1, 0)).thenReturn(out);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
-        String json = ow.writeValueAsString(out);
-        Assertions.assertEquals(json, postingBoardController.getHistory(1,0));
+        Assertions.assertEquals(out, postingBoardController.getHistory(1,0));
 
     }
 

@@ -64,9 +64,7 @@ class CommentControllerTest {
         comm.setPostId(1);
         comm.setStatus("OPEN");
         when(commentService.postNewComment(comm.toCommentsDto())).thenReturn(comm.toCommentsDto());
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(comm.toCommentsDto());
-        Assertions.assertEquals(commentController.comment(1,"test",mockPrincipal),json);
+        Assertions.assertEquals(commentController.comment(1,"test",mockPrincipal),comm.toCommentsDto());
     }
 
     @Test
@@ -104,6 +102,6 @@ class CommentControllerTest {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(commentsDtos);
         when(commentService.showComments(1,0)).thenReturn(commentsDtos);
-        Assertions.assertEquals(commentController.checkComments(1,0).equals(json),true);
+        Assertions.assertEquals(commentController.checkComments(1,0),commentsDtos);
     }
 }

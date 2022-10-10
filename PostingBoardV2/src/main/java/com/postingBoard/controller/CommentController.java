@@ -12,6 +12,7 @@ import com.postingBoard.service.interfaces.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,14 +34,15 @@ public class CommentController {
             produces = "application/json"
     )
     @ResponseBody
-    public String comment(@PathVariable int post, @RequestParam String content, Principal principal) throws JsonProcessingException {
+    public CommentsDto comment(@PathVariable int post, @RequestParam String content, Principal principal) throws JsonProcessingException {
         Post posts = postService.findByID(post);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+       // ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         postService.checkForNull(posts);
         CommentsDto commentsDto = new CommentsDto(userService.findByUsername(principal.getName()).getId(), post, content, null);
         commentsDto = commentService.postNewComment(commentsDto);
-        String json = ow.writeValueAsString(commentsDto);
-        return json;
+        return commentsDto;
+       /* String json = ow.writeValueAsString(commentsDto);
+        return json;*/
 
     }
 
@@ -64,13 +66,12 @@ public class CommentController {
             produces = "application/json"
     )
     @ResponseBody
-    public String checkComments(@PathVariable int post, @RequestParam int page) throws JsonProcessingException {
+    public List<CommentsDto> checkComments(@PathVariable int post, @RequestParam int page) throws JsonProcessingException {
         Post posts = postService.findByID(post);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         postService.checkForNull(posts);
         List<CommentsDto> comments = commentService.showComments(post, page);
-        String json = ow.writeValueAsString(comments);
-        return json;
+        return comments;
     }
 }
 

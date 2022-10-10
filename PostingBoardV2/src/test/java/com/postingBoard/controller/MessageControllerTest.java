@@ -48,10 +48,8 @@ class MessageControllerTest {
         when(userService.findById(1)).thenReturn(user);
         ChatMessagesDto chatMessagesDto = new ChatMessagesDto(1,1,"test", Date.from(Instant.now()));
         when(chatService.sendMessage(any(ChatMessagesDto.class) )).thenReturn(chatMessagesDto);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(chatMessagesDto);
-        String response = messageController.sendMessage(1,"test",mockPrincipal);
-        Assertions.assertEquals(response,json);
+        ChatMessagesDto response = messageController.sendMessage(1,"test",mockPrincipal);
+        Assertions.assertEquals(response,chatMessagesDto);
     }
 
     @Test
@@ -61,16 +59,15 @@ class MessageControllerTest {
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("me");
         when(userService.findByUsername("me")).thenReturn(user);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         List<ChatMessagesDto> chatMessagesDto = new ArrayList<>();
         ChatMessagesDto chatMessage = new ChatMessagesDto(1,1,"test", Date.from(Instant.now()));
         chatMessagesDto.add(chatMessage);
         when(userService.findById(1)).thenReturn(user);
         when(chatService.checkAllMail(user)).thenReturn(chatMessagesDto);
         when(chatService.checkMailFromUser(user,user)).thenReturn(chatMessagesDto);
-        String json = ow.writeValueAsString(chatMessagesDto);
-        Assertions.assertEquals(messageController.checkMail(mockPrincipal),json);
-        Assertions.assertEquals(messageController.checkMail(1,mockPrincipal),json);
+
+        Assertions.assertEquals(messageController.checkMail(mockPrincipal),chatMessagesDto);
+        Assertions.assertEquals(messageController.checkMail(1,mockPrincipal),chatMessagesDto);
 
     }
 }

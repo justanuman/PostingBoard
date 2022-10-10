@@ -1,7 +1,6 @@
 package com.postingBoard.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.postingBoard.dto.InternalTransactionsDto;
 import com.postingBoard.dto.TransactionsDto;
 import com.postingBoard.entity.Post;
 import com.postingBoard.service.interfaces.IChatService;
@@ -17,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -38,25 +38,21 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String openTransaction(@PathVariable int postid, @RequestParam(required = false) Integer toBePromotedPostID, Principal principal) throws Exception {
+    public TransactionsDto openTransaction(@PathVariable int postid, @RequestParam(required = false) Integer toBePromotedPostID, Principal principal) throws Exception {
         Post posts = postService.findByID(postid);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         if (posts != null && postid != 1 && postid != 2) {
             TransactionsDto transactionsDto = new TransactionsDto(posts.getAuthorId(), userService.findByUsername(principal.getName()).getId(), postid, posts.getPrice(), "OPEN");
             transactionsDto.setSpecialPostID(3);
             transactionsDto = transactionService.openTransaction(transactionsDto);
-            String json = ow.writeValueAsString(transactionsDto);
-            return json;
+            return transactionsDto;
         } else if (posts != null && postid == 1) {
             TransactionsDto transactionsDto = new TransactionsDto(posts.getAuthorId(), userService.findByUsername(principal.getName()).getId(), toBePromotedPostID, posts.getPrice(), "OPEN", postid);
             transactionsDto = transactionService.openTransaction(transactionsDto);
-            String json = ow.writeValueAsString(transactionsDto);
-            return json;
+            return transactionsDto;
         } else if (posts != null && postid == 2) {
             TransactionsDto transactionsDto = new TransactionsDto(posts.getAuthorId(), userService.findByUsername(principal.getName()).getId(), postid, posts.getPrice(), "OPEN", postid);
             transactionsDto = transactionService.openTransaction(transactionsDto);
-            String json = ow.writeValueAsString(transactionsDto);
-            return json;
+            return transactionsDto;
         } else {
             throw new ResponseStatusException(NOT_FOUND, "Unable to find resource");
         }
@@ -67,17 +63,15 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String promoteTransaction(@PathVariable int postid,@RequestParam(required = false) Double amount , Principal principal) throws Exception {
+    public TransactionsDto promoteTransaction(@PathVariable int postid, @RequestParam(required = false) Double amount , Principal principal) throws Exception {
         if(amount==null)
         {
             amount=1000.0;
         }
         Post posts = postService.findByID(postid);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         TransactionsDto transactionsDto = new TransactionsDto(1, userService.findByUsername(principal.getName()).getId(), postid,BigDecimal.valueOf(amount), "OPEN", 1);
         transactionsDto = transactionService.openTransaction(transactionsDto);
-        String json = ow.writeValueAsString(transactionsDto);
-        return json;
+        return transactionsDto;
     }
 
     @PostMapping(
@@ -85,16 +79,14 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String promoteUserTransaction(@RequestParam(required = false) Double amount , Principal principal) throws Exception {
+    public TransactionsDto promoteUserTransaction(@RequestParam(required = false) Double amount , Principal principal) throws Exception {
         if(amount==null)
         {
             amount=1000.0;
         }
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         TransactionsDto transactionsDto = new TransactionsDto(1, userService.findByUsername(principal.getName()).getId(), 2, BigDecimal.valueOf(amount), "OPEN", 2);
         transactionsDto = transactionService.openTransaction(transactionsDto);
-        String json = ow.writeValueAsString(transactionsDto);
-        return json;
+        return transactionsDto;
     }
 
     @GetMapping(
@@ -102,9 +94,8 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String transactionCheck(@RequestParam int id) throws Exception {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(transactionService.checkIfTransactionIsOpen(id));
+    public Boolean transactionCheck(@RequestParam int id) throws Exception {
+        return transactionService.checkIfTransactionIsOpen(id);
     }
 
     @GetMapping(
@@ -112,9 +103,8 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String getTransactions() throws Exception {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(transactionService.getAllOpenTransactions());
+    public List<InternalTransactionsDto> getTransactions() throws Exception {
+        return transactionService.getAllOpenTransactions();
     }
 
     @PutMapping(
@@ -122,8 +112,8 @@ public class TransactionController {
             produces = "application/json"
     )
     @ResponseBody
-    public String closeTransaction(@RequestParam int id) {
-        return transactionService.closeTransaction(id).toString();
+    public Boolean closeTransaction(@RequestParam int id) {
+        return transactionService.closeTransaction(id);
     }
 
 }

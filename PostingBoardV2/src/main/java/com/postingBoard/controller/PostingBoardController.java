@@ -54,11 +54,11 @@ public class PostingBoardController {
             produces = "application/json"
     )
     @ResponseBody
-    public String updatePost(@PathVariable int post,
-                             @RequestParam(required = false) String title,
-                             @RequestParam(required = false) String category,
-                             @RequestParam(required = false) BigDecimal price,
-                             @RequestParam(required = false) String contents, Principal principal) throws JsonProcessingException {
+    public PostsDto updatePost(@PathVariable int post,
+                               @RequestParam(required = false) String title,
+                               @RequestParam(required = false) String category,
+                               @RequestParam(required = false) BigDecimal price,
+                               @RequestParam(required = false) String contents, Principal principal) throws JsonProcessingException {
         int user = userService.findByUsername(principal.getName()).getId();
         Post posts = postService.findByIDAndAuthor(post, user);
         postService.checkForNull(posts);
@@ -66,8 +66,7 @@ public class PostingBoardController {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         // if (user != null && posts != null && posts.getAuthorId().equals(user.getId())) {
         PostsDto postsDto = postService.updatePost(posts.getId(), updated);
-        String json = ow.writeValueAsString(postsDto);
-        return json;
+        return postsDto;
     }
 
     @DeleteMapping(
@@ -104,28 +103,31 @@ public class PostingBoardController {
             produces = "application/json"
     )
     @ResponseBody
-    public String postsFeed(@RequestParam int choice, @RequestParam int page, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd-hh-mm-ss") Date date, @RequestParam(required = false) String category, @RequestParam(required = false) Integer authorID) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    public List<PostsDto> postsFeed(@RequestParam int choice, @RequestParam int page, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd-hh-mm-ss") Date date, @RequestParam(required = false) String category, @RequestParam(required = false) Integer authorID) throws JsonProcessingException {
         List<PostsDto> out;
         if (choice == 0) {
             out = postService.showFeed(date, page);
-            String json = ow.writeValueAsString(out);
-            return json;
+            return out;
+            /*String json = ow.writeValueAsString(out);
+            return json;*/
         }
         if (choice == 1) {
             out = postService.showFeedByCategory(category, page);
-            String json = ow.writeValueAsString(out);
-            return json;
+            return out;
+           /* String json = ow.writeValueAsString(out);
+            return json;*/
         }
         if (choice == 2) {
             out = postService.showFeedByAuthor(authorID, page);
-            String json = ow.writeValueAsString(out);
-            return json;
+            return out;
+           /* String json = ow.writeValueAsString(out);
+            return json;*/
         }
         if (choice == 3) {
             out = postService.showFeed(Date.from(Instant.now().minusSeconds(2628000)), page);
-            String json = ow.writeValueAsString(out);
-            return json;
+            return out;
+           /* String json = ow.writeValueAsString(out);
+            return json;*/
         }
         return null;
     }
@@ -135,11 +137,9 @@ public class PostingBoardController {
             produces = "application/json"
     )
     @ResponseBody
-    public String getHistory(@PathVariable int id, @RequestParam int page) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    public List<PostsDto> getHistory(@PathVariable int id, @RequestParam int page) throws JsonProcessingException {
         List<PostsDto> out = postService.showAuthorHistory(id, page);
-        String json = ow.writeValueAsString(out);
-        return json;
+        return out;
     }
 
     @PutMapping(
@@ -155,22 +155,4 @@ public class PostingBoardController {
 
     }
 
- /*   @PutMapping(
-            value = "/board/{id}/buy",
-            produces = "application/json"
-    )
-    @ResponseBody
-    public String buyPost(@PathVariable int id) throws JsonProcessingException {
-        Posts posts = postService.findByID(id);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        if (posts != null) {
-            //postService.promotePost(id);
-            //TODO
-
-            String json = ow.writeValueAsString("promoted");
-            return json;
-        } else {
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find resource");
-        }
-    }*/
 }

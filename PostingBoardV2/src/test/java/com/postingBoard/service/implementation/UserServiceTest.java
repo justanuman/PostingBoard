@@ -5,6 +5,8 @@ import com.postingBoard.entity.DbUser;
 import com.postingBoard.repo.IRoleDAO;
 import com.postingBoard.repo.IUserDAO;
 import com.postingBoard.repo.IUserRoleDAO;
+import com.postingBoard.utility.Mappers.UserDtoAdapter;
+import com.postingBoard.utility.Mappers.UserProfileDtoAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,10 @@ class UserServiceTest {
  IRoleDAO roleDAO;
     @Mock
  IUserRoleDAO userRoleDAO;
+    @Mock
+    UserDtoAdapter userDtoAdapter;
+    @Mock
+    UserProfileDtoAdapter userProfileDtoAdapter;
     @InjectMocks
     UserService userService;
     @BeforeEach

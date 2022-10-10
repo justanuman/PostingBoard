@@ -34,14 +34,12 @@ public class MessageController {
             produces = "application/json"
     )
     @ResponseBody
-    public String sendMessage(@RequestParam int recepientID, @RequestParam String message, Principal principal) throws JsonProcessingException {
+    public ChatMessagesDto sendMessage(@RequestParam int recepientID, @RequestParam String message, Principal principal) throws JsonProcessingException {
         DbUser user = userService.findById(recepientID);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         userService.checkForNull(user);
         ChatMessagesDto chatMessagesDto = new ChatMessagesDto(userService.findByUsername(principal.getName()).getId(), recepientID, message, Date.from(Instant.now()));
         chatMessagesDto = chatService.sendMessage(chatMessagesDto);
-        String json = ow.writeValueAsString(chatMessagesDto);
-        return json;
+        return chatMessagesDto;
 
     }
 
@@ -50,11 +48,9 @@ public class MessageController {
             produces = "application/json"
     )
     @ResponseBody
-    public String checkMail(Principal principal) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    public  List<ChatMessagesDto> checkMail(Principal principal) throws JsonProcessingException {
         List<ChatMessagesDto> chatMessagesDto = chatService.checkAllMail(userService.findByUsername(principal.getName()));
-        String json = ow.writeValueAsString(chatMessagesDto);
-        return json;
+        return chatMessagesDto;
     }
 
     @GetMapping(
@@ -62,12 +58,11 @@ public class MessageController {
             produces = "application/json"
     )
     @ResponseBody
-    public String checkMail(@RequestParam int sender, Principal principal) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    public List<ChatMessagesDto> checkMail(@RequestParam int sender, Principal principal) throws JsonProcessingException {
         userService.checkForNull(userService.findById(sender));
         List<ChatMessagesDto> chatMessagesDto = chatService.checkMailFromUser(userService.findByUsername(principal.getName()), userService.findById(sender));
-        String json = ow.writeValueAsString(chatMessagesDto);
-        return json;
+
+        return chatMessagesDto;
     }
 
     @GetMapping(
@@ -75,11 +70,9 @@ public class MessageController {
             produces = "application/json"
     )
     @ResponseBody
-    public String checkSentMail(Principal principal) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    public List<ChatMessagesDto> checkSentMail(Principal principal) throws JsonProcessingException {
         List<ChatMessagesDto> chatMessagesDto = chatService.checkSentMail(userService.findByUsername(principal.getName()));
-        String json = ow.writeValueAsString(chatMessagesDto);
-        return json;
+        return chatMessagesDto;
     }
 
     @GetMapping(

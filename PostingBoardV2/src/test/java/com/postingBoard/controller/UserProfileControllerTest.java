@@ -11,6 +11,7 @@ import com.postingBoard.service.interfaces.IPostService;
 import com.postingBoard.service.interfaces.ITransactionService;
 import com.postingBoard.service.interfaces.IUserService;
 import com.postingBoard.utility.Mappers.UserDtoAdapter;
+import com.postingBoard.utility.Mappers.UserProfileDtoAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +46,8 @@ class UserProfileControllerTest {
         user.setPassword("token");
         user.setEmail("ll");
         when(userService.findById(1)).thenReturn(user);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(user.touserDTO());
-        Assertions.assertEquals(userProfileController.getUserInfo(1),json);
+        UserDtoAdapter userDtoAdapter= new UserDtoAdapter();
+        Assertions.assertEquals(userProfileController.getUserInfo(1).getUsername(),userDtoAdapter.modelToDto(user).getUsername());
     }
 
     @Test
@@ -66,9 +66,7 @@ class UserProfileControllerTest {
         when(userService.findByUsername("me")).thenReturn(user);
 //        when(userService.findById(1)).thenReturn(user);
         when( userService.updateProfile(user.getId(), userProfileDto, user)).thenReturn(userDTO);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(userDTO);
-        Assertions.assertEquals(userProfileController.editProfileInfo("me",null,null,null,null,null,null,null,mockPrincipal),json);
+        Assertions.assertEquals(userProfileController.editProfileInfo("me",null,null,null,null,null,null,null,mockPrincipal).equals(userDTO),true);
     }
 
     @Test
@@ -79,9 +77,8 @@ class UserProfileControllerTest {
         user.setPassword("token");
         user.setEmail("ll");
         when(userService.findById(1)).thenReturn(user);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(user.touserDTO());
-        Assertions.assertEquals(userProfileController.promoteUser(1),json);
+        UserDtoAdapter userDtoAdapter= new UserDtoAdapter();
+        Assertions.assertEquals(userProfileController.promoteUser(1).getUsername(),userDtoAdapter.modelToDto(user).getUsername());
         verify(userService, times(1)).promoteUser(user);
 
     }
@@ -96,8 +93,7 @@ class UserProfileControllerTest {
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("me");
         when(userService.findByUsername("me")).thenReturn(user);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(user.touserDTO());
-        Assertions.assertEquals(userProfileController.getPersonalInfo(mockPrincipal),json);
+
+        Assertions.assertEquals(userProfileController.getPersonalInfo(mockPrincipal).getUsername(),user.touserDTO().getUsername());
     }
 }
